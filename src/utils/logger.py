@@ -14,7 +14,14 @@ def bold_key(text: str) -> str:
     return f"[bold]{text}[/]"
 
 def color_val(val: Any, color: str) -> str:
-    return f"[{color}]{val!r}[/{color}]"
+    # Handle bytes specially to avoid Rich markup parsing issues
+    if isinstance(val, bytes):
+        display = f"<bytes: {len(val)} bytes>"
+    else:
+        display = repr(val)
+    # Escape brackets to prevent Rich markup parsing
+    display = display.replace("[", "\\[").replace("]", "\\]")
+    return f"[{color}]{display}[/{color}]"
 
 
 def node_logger(func: Callable):

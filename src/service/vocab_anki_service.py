@@ -7,7 +7,7 @@ from src.config import get_anki_settings
 from src.utils.logger import console
 
 
-class AnkiService:
+class VocabAnkiService:
     def __init__(self):
         self.settings = get_anki_settings()
         self.default_tag = self.settings.tag_default
@@ -27,7 +27,7 @@ class AnkiService:
 
         if removable:
             tags_str = " ".join(removable)  # ⚠ MUST be space-separated string
-            console.log(f"[AnkiService] Removing tags: {tags_str}", markup=False)
+            console.log(f"[VocabAnkiService] Removing tags: {tags_str}", markup=False)
             await invoke_anki("removeTags", {"notes": [note_id], "tags": tags_str})
 
     async def _ensure_tags(self, note_id: int, tags: List[str]):
@@ -48,15 +48,16 @@ class AnkiService:
             retry = " ".join(missing)
             await invoke_anki("addTags", {"notes": [note_id], "tags": retry})
         else:
-            console.log(f"[AnkiService] Tags confirmed: {note_tags}", markup=False)
+            console.log(f"[VocabAnkiService] Tags confirmed: {note_tags}", markup=False)
+
     # 查重
     async def find_note(self, word: str) -> Optional[int]:
         query = f'deck:"{self.settings.deck_name}" front:"{word}"'
         notes = await invoke_anki("findNotes", {"query": query})
         if notes:
-            console.log(f"[AnkiService] found existing note: {notes[0]}", markup=False)
+            console.log(f"[VocabAnkiService] found existing note: {notes[0]}", markup=False)
             return notes[0]
-        console.log(f"[AnkiService] NEW word: {word}", markup=False)
+        console.log(f"[VocabAnkiService] NEW word: {word}", markup=False)
         return None
 
     # 建 note 結構
@@ -73,7 +74,7 @@ class AnkiService:
     async def add_note(self, word: str, back_html: str, tags: List[str]) -> int:
         note = self.make_note(word, back_html, tags)
         note_id = await invoke_anki("addNote", {"note": note})
-        console.log(f"[AnkiService] ADD → {note_id}", markup=False)
+        console.log(f"[VocabAnkiService] ADD → {note_id}", markup=False)
         return note_id
 
     # 更新 note
@@ -88,5 +89,5 @@ class AnkiService:
 
 
 @lru_cache()
-def get_anki_service() -> AnkiService:
-    return AnkiService()
+def get_vocab_anki_service() -> VocabAnkiService:
+    return VocabAnkiService()

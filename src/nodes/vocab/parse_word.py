@@ -1,6 +1,6 @@
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_core.prompts import PromptTemplate
-from src.models.state import WordState
+from src.models.vocab_state import VocabState
 from src.models.word_schema import WordParseOutput
 from src.utils.prompt_loader import load_prompt
 from src.utils.llm import ask_llm
@@ -18,7 +18,7 @@ parse_word_prompt = PromptTemplate(
 )
 
 @node_logger
-async def parse_word(state: WordState) -> Dict[str, Any]:
+async def parse_word(state: VocabState) -> Dict[str, Any]:
     word = state["word"]
     user_prompt = parse_word_prompt.format(word=word)
 

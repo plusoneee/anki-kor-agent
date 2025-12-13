@@ -1,14 +1,17 @@
 from langgraph.graph import StateGraph, START, END
-from src.models.state import WordState
-from src.nodes.parse_word import parse_word
-from src.nodes.build_back import build_back
-from src.nodes.send_to_anki import send_to_anki
-from src.nodes.extract_root import extract_root
-from src.nodes.check_duplicate import check_duplicate
-from src.nodes.build_tags import build_tags
+from src.models.vocab_state import VocabState
+from src.nodes.vocab import (
+    parse_word,
+    build_back,
+    send_to_anki,
+    extract_root,
+    check_duplicate,
+    build_tags,
+)
 
-def build_graph():
-    graph = StateGraph(WordState)
+
+def build_vocab_graph():
+    graph = StateGraph(VocabState)
 
     # 1. nodes
     graph.add_node("check_duplicate", check_duplicate)
@@ -50,5 +53,6 @@ def build_graph():
 
     return graph.compile()
 
-def get_graph_app():
-    return build_graph()
+
+def get_vocab_graph_app():
+    return build_vocab_graph()

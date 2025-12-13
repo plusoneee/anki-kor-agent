@@ -1,8 +1,7 @@
-from src.service.anki_service import get_anki_service
-
+from src.service.vocab_anki_service import get_vocab_anki_service
 from src.utils.logger import node_logger
 
-anki = get_anki_service()
+anki = get_vocab_anki_service()
 
 @node_logger
 async def check_duplicate(state):
@@ -25,4 +24,3 @@ async def check_duplicate(state):
         "exists": False,
         "anki_note_id": note_id
     }
-

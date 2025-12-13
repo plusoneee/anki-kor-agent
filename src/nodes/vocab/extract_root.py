@@ -2,7 +2,7 @@ from typing import Dict, Any
 from langchain_core.output_parsers import PydanticOutputParser
 
 from src.models.root_schema import RootOutput
-from src.models.state import WordState
+from src.models.vocab_state import VocabState
 from src.utils.llm import ask_llm
 from src.utils.prompt_loader import load_prompt
 from src.utils.logger import node_logger
@@ -13,7 +13,7 @@ parser = PydanticOutputParser(pydantic_object=RootOutput)
 
 
 @node_logger
-async def extract_root(state: WordState) -> Dict[str, Any]:
+async def extract_root(state: VocabState) -> Dict[str, Any]:
     """
     解析單字字源：
       - 若為漢字詞: 回傳一個漢字（如 學）

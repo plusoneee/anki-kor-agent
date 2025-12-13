@@ -1,18 +1,24 @@
 # LangGraph Anki Loader
 
-A Korean vocabulary learning tool that uses LangGraph and Azure OpenAI to automatically parse Korean words, extract roots/hanja, and create Anki flashcards via AnkiConnect.
+A Korean learning tool that uses LangGraph and Azure OpenAI to automatically create Anki flashcards. Supports both vocabulary cards and listening cards with TTS audio.
 
 ## Features
 
+### Vocabulary Cards (`/vocab`)
 - Parse Korean words with LLM to extract meaning, part of speech, and example sentences
 - Extract word roots and hanja (Chinese characters) information
 - Automatically create or update Anki flashcards
 - Duplicate detection to avoid creating redundant cards
-- Batch processing support for multiple words
+
+### Listening Cards (`/listening`)
+- Generate TTS audio from Korean sentences using Google TTS (gTTS)
+- Auto-translate Korean to Chinese if translation not provided
+- Create listening-focused cards (audio front, text back)
+- Automatically create Anki deck and note type
 
 ## Architecture
 
-The core processing uses a LangGraph StateGraph with parallel execution:
+### Vocabulary Pipeline
 
 ```mermaid
 flowchart LR
@@ -25,6 +31,21 @@ flowchart LR
     F --> G
     G --> H[build_back]
     H --> I[send_to_anki]
+    I --> C
+```
+
+### Listening Pipeline
+
+```mermaid
+flowchart LR
+    A[START] --> B[check_sentence_duplicate]
+    B -->|exists| C[END]
+    B -->|continue| D[translate_sentence]
+    D --> E[generate_tts]
+    E --> F[store_audio]
+    F --> G[ensure_listening_model]
+    G --> H[build_listening_card]
+    H --> I[send_listening_to_anki]
     I --> C
 ```
 
@@ -61,7 +82,7 @@ AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 
 ## Usage
 
-> **Important:** Make sure Anki is running before starting the server. AnkiConnect only works when Anki is open. If Anki is not running, requests to `ANKI_URL` will fail with a connection error.
+> **Important:** Make sure Anki is running before starting the server. AnkiConnect only works when Anki is open.
 
 1. Start Anki application
 
@@ -74,23 +95,50 @@ uv run uvicorn main:app --reload
 
 ### API Endpoints
 
-#### Parse Single Word
+#### Vocabulary - Single Word
 ```bash
-curl -X POST http://127.0.0.1:8000/parse \
+curl -X POST http://127.0.0.1:8000/vocab \
   -H "Content-Type: application/json" \
-  -d '{"word": "안녕하세요", "force_update": false}'
+  -d '{"word": "학생", "force_update": false}'
 ```
 
-#### Parse Multiple Words
+#### Vocabulary - Batch
 ```bash
-curl -X POST http://127.0.0.1:8000/parse-batch \
+curl -X POST http://127.0.0.1:8000/vocab/batch \
   -H "Content-Type: application/json" \
-  -d '{"words": ["안녕하세요", "감사합니다"], "force_update": false}'
+  -d '{"words": ["학생", "선생님"], "force_update": false}'
+```
+
+#### Listening - Single Sentence
+```bash
+# With user-provided translation
+curl -X POST http://127.0.0.1:8000/listening \
+  -H "Content-Type: application/json" \
+  -d '{"korean_sentence": "안녕하세요", "chinese_translation": "你好"}'
+
+# Auto-translate with LLM
+curl -X POST http://127.0.0.1:8000/listening \
+  -H "Content-Type: application/json" \
+  -d '{"korean_sentence": "오늘 날씨가 좋아요"}'
+```
+
+#### Listening - Batch
+```bash
+curl -X POST http://127.0.0.1:8000/listening/batch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sentences": [
+      {"korean_sentence": "안녕하세요", "chinese_translation": "你好"},
+      {"korean_sentence": "감사합니다"}
+    ]
+  }'
 ```
 
 ## Configuration
 
 Environment variables (see `.env.example`):
+
+### Azure OpenAI Settings
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -98,6 +146,45 @@ Environment variables (see `.env.example`):
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint URL | (required) |
 | `AZURE_OPENAI_API_VERSION` | API version | `2025-01-01-preview` |
 | `AZURE_OPENAI_DEPLOYMENT` | Model deployment name | `gpt-4o-mini-0` |
+
+### Anki Vocabulary Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
 | `ANKI_URL` | AnkiConnect URL | `http://127.0.0.1:8765` |
 | `ANKI_DECK_NAME` | Target Anki deck | `Korean::Auto` |
 | `ANKI_MODEL_NAME` | Anki note type | `Basic` |
+
+### Anki Listening Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ANKI_LISTENING_DECK_NAME` | Listening deck | `Korean::Listening` |
+| `ANKI_LISTENING_MODEL_NAME` | Listening note type | `Listening` |
+| `ANKI_LISTENING_TAG_DEFAULT` | Default tag | `listening_auto` |
+
+## Project Structure
+
+```
+src/
+├── routers/                   # FastAPI routers
+│   ├── vocab.py               # /vocab endpoints
+│   └── listening.py           # /listening endpoints
+├── graph/
+│   ├── vocab_loader.py        # Vocabulary LangGraph pipeline
+│   └── listening_loader.py    # Listening LangGraph pipeline
+├── models/
+│   ├── vocab_state.py         # Vocabulary state definition
+│   └── listening_state.py     # Listening state definition
+├── nodes/
+│   ├── vocab/                 # Vocabulary processing nodes
+│   └── listening/             # Listening processing nodes
+├── service/
+│   ├── vocab_anki_service.py
+│   └── listening_anki_service.py
+├── prompt/                    # LLM prompt YAML files
+└── utils/
+    ├── anki.py                # AnkiConnect client
+    ├── llm.py                 # Azure OpenAI wrapper
+    └── tts.py                 # Google TTS wrapper
+```

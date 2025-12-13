@@ -1,4 +1,4 @@
-from src.models.state import WordState
+from src.models.vocab_state import VocabState
 from src.utils.template import render_template
 from src.utils.logger import node_logger
 
@@ -19,7 +19,7 @@ POS_COLORS = {
 }
 
 @node_logger
-async def build_back(state: WordState) -> WordState:
+async def build_back(state: VocabState) -> VocabState:
 
     pos = state.get("pos")
     pos_zh = POS_MAP.get(pos, "") if pos else ""

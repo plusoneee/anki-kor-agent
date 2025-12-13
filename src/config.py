@@ -26,10 +26,31 @@ class AnkiSettings(BaseSettings):
     tag_default: str = "korean_auto"
     tag_native: str = "native_kor"
 
+
+class ListeningSettings(BaseSettings):
+    deck_name: str = "Korean::Listening"
+    model_name: str = "Listening"
+    tag_default: str = "listening_auto"
+    card_css: str = """
+        .card { text-align: center; }
+        .korean { font-size: 24px; margin: 10px 0; }
+        .chinese { font-size: 18px; color: #666; }
+    """
+    model_config = SettingsConfigDict(
+        env_file=".env", env_prefix="ANKI_LISTENING_", extra="ignore"
+    )
+
+
 @lru_cache()
 def get_env_settings():
     return AzureOpenAISettings()
 
+
 @lru_cache()
 def get_anki_settings() -> AnkiSettings:
     return AnkiSettings()
+
+
+@lru_cache()
+def get_listening_settings() -> ListeningSettings:
+    return ListeningSettings()

@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
-# .evn
+# .env
 *.env
+
+# Claude Code
+CLAUDE.md

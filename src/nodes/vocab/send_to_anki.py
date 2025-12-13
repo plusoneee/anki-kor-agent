@@ -1,14 +1,13 @@
-
-from src.models.state import WordState
-from src.service.anki_service import get_anki_service
+from src.models.vocab_state import VocabState
+from src.service.vocab_anki_service import get_vocab_anki_service
 from typing import Dict, Any
 from src.utils.logger import node_logger
 
-anki = get_anki_service()
+anki = get_vocab_anki_service()
 
 
 @node_logger
-async def send_to_anki(state: WordState) -> Dict[str, Any]:
+async def send_to_anki(state: VocabState) -> Dict[str, Any]:
     """
     Node 任務：將解析好的資料寫入 Anki。
     - 先用 service.find_note() 判斷是否存在
