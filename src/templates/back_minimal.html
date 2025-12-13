@@ -1,0 +1,37 @@
+<div class="card-root">
+
+    <!-- 單字 -->
+    <div class="word">
+        {{ word }}
+    </div>
+
+    <!-- 中文意思 + 詞性 -->
+    <div class="meaning-pos">
+        <span>{{ meaning }}</span>
+
+        {% if pos_zh %}
+        <span class="pos-badge" style="background-color: {{ badge_color }};">
+            {{ pos_zh }}
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- 例句 -->
+    {% for ex in examples %}
+    <div class="ex-block">
+
+        <div class="ex-type">
+            {% if ex.type == 'casual' %}
+                現在式（口語 / 요）
+            {% else %}
+                現在式（正式 / ㅂ니다）
+            {% endif %}
+        </div>
+
+        <div class="ex-kr">{{ ex.kr }}</div>
+        <div class="ex-zh">{{ ex.zh }}</div>
+
+    </div>
+    {% endfor %}
+
+</div>
