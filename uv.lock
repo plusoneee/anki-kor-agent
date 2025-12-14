@@ -97,7 +97,7 @@ wheels = [
 ]
 
 [[package]]
-name = "anki-loader"
+name = "anki-kor-agent"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

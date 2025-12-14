@@ -1,13 +1,14 @@
-# LangGraph Anki Loader
+# Anki Kor Agent
 
-A Korean learning tool that uses LangGraph and Azure OpenAI to automatically create Anki flashcards. Supports both vocabulary cards and listening cards with TTS audio.
+A Korean learning agent that uses LangGraph and Azure OpenAI to automatically create Anki flashcards. Supports both vocabulary cards and listening cards with TTS audio.
 
 ## Features
 
 ### Vocabulary Cards (`/vocab`)
 - Parse Korean words with LLM to extract meaning, part of speech, and example sentences
 - Extract word roots and hanja (Chinese characters) information
-- Automatically create or update Anki flashcards
+- Generate TTS audio for word pronunciation
+- Automatically create or update Anki flashcards with structured fields (Word, Audio, Meaning, POS, Examples)
 - Duplicate detection to avoid creating redundant cards
 
 ### Listening Cards (`/listening`)
@@ -29,24 +30,25 @@ flowchart LR
     D --> F[extract_root]
     E --> G[build_tags]
     F --> G
-    G --> H[build_back]
-    H --> I[send_to_anki]
-    I --> C
+    G --> H[build_examples]
+    H --> I[generate_tts]
+    I --> J[store_audio]
+    J --> K[send_to_anki]
+    K --> C
 ```
 
 ### Listening Pipeline
 
 ```mermaid
 flowchart LR
-    A[START] --> B[check_sentence_duplicate]
+    A[START] --> B[check_duplicate]
     B -->|exists| C[END]
     B -->|continue| D[translate_sentence]
     D --> E[generate_tts]
     E --> F[store_audio]
-    F --> G[ensure_listening_model]
-    G --> H[build_listening_card]
-    H --> I[send_listening_to_anki]
-    I --> C
+    F --> G[build_card]
+    G --> H[send_to_anki]
+    H --> C
 ```
 
 ## Prerequisites
@@ -60,8 +62,8 @@ flowchart LR
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/plusoneee/langgraph-anki-loader.git
-cd langgraph-anki-loader
+git clone https://github.com/plusoneee/anki-kor-agent.git
+cd anki-kor-agent
 ```
 
 2. Install dependencies:
@@ -153,7 +155,7 @@ Environment variables (see `.env.example`):
 |----------|-------------|---------|
 | `ANKI_URL` | AnkiConnect URL | `http://127.0.0.1:8765` |
 | `ANKI_DECK_NAME` | Target Anki deck | `Korean::Auto` |
-| `ANKI_MODEL_NAME` | Anki note type | `Basic` |
+| `ANKI_VOCAB_MODEL_NAME` | Anki note type (auto-created) | `Korean_Vocab_Auto` |
 
 ### Anki Listening Settings
 
