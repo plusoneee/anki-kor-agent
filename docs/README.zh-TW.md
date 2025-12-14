@@ -192,6 +192,70 @@ curl -X POST http://127.0.0.1:8000/listening/batch \
   }'
 ```
 
+### 單字涵蓋率檢查
+
+追蹤學習進度，檢查你的目標單字列表中有多少已經在 Anki 牌組中。
+
+#### 列出可用的目標單字列表
+```bash
+curl http://127.0.0.1:8000/vocab/targets
+```
+
+回應：
+```json
+{
+  "files": ["korean_words.txt", "beginner.txt"],
+  "default": "korean_words.txt"
+}
+```
+
+#### 檢查涵蓋率
+```bash
+# 檢查預設單字列表（korean_words.txt），顯示前 10 個缺少的單字
+curl http://127.0.0.1:8000/vocab/coverage
+
+# 檢查特定單字列表
+curl http://127.0.0.1:8000/vocab/coverage?file=beginner.txt
+
+# 自訂回傳的缺少單字數量
+curl http://127.0.0.1:8000/vocab/coverage?file=beginner.txt&top_k=20
+
+# 取得所有缺少的單字（設定 top_k=0）
+curl http://127.0.0.1:8000/vocab/coverage?top_k=0
+```
+
+回應：
+```json
+{
+  "target_word_count": 1668,
+  "existing_count": 119,
+  "missing_count": 1549,
+  "coverage_percentage": 7.13,
+  "missing_words": ["가게", "가격", "가구", ...]
+}
+```
+
+#### 取得所有 Anki 單字
+```bash
+curl http://127.0.0.1:8000/vocab/words
+```
+
+**設定目標單字列表：**
+
+1. 在專案根目錄建立 `data/` 目錄（如果不存在）
+2. 新增你的目標單字列表檔案（每行一個單字，UTF-8 編碼）：
+   ```
+   data/
+   ├── korean_words.txt       # 預設目標列表
+   ├── beginner.txt           # 初級單字
+   └── intermediate.txt       # 中級單字
+   ```
+3. 可在 `.env` 中自訂目錄和預設檔案：
+   ```
+   WORD_LIST_DIR=data
+   DEFAULT_WORD_LIST=korean_words.txt
+   ```
+
 ## 環境變數設定
 
 詳見 `.env.example`

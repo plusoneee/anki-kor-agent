@@ -61,6 +61,29 @@ class VocabAnkiService:
         console.log(f"[VocabAnkiService] NEW word: {word}", markup=False)
         return None
 
+    # 獲取所有vocab單字（用於涵蓋率檢查）
+    async def get_all_vocab_words(self) -> set[str]:
+        """Fetch all vocabulary words from Anki deck."""
+        query = f'deck:"{self.settings.deck_name}"'
+        note_ids = await invoke_anki("findNotes", {"query": query})
+
+        if not note_ids:
+            console.log("[VocabAnkiService] No vocab cards found in deck", markup=False)
+            return set()
+
+        # Batch fetch all note info
+        notes_info = await invoke_anki("notesInfo", {"notes": note_ids})
+
+        # Extract Word field from each note
+        words = set()
+        for note in notes_info:
+            word = note.get("fields", {}).get("Word", {}).get("value", "").strip()
+            if word:
+                words.add(word)
+
+        console.log(f"[VocabAnkiService] Retrieved {len(words)} vocab words", markup=False)
+        return words
+
     # 建 note 結構（使用 8 個獨立欄位）
     def make_note(
         self,
