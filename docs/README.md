@@ -192,6 +192,70 @@ curl -X POST http://127.0.0.1:8000/listening/batch \
   }'
 ```
 
+### Vocabulary Coverage Check
+
+Track your learning progress by checking how many words from your target list are already in your Anki deck.
+
+#### List Available Target Word Lists
+```bash
+curl http://127.0.0.1:8000/vocab/targets
+```
+
+Response:
+```json
+{
+  "files": ["korean_words.txt", "beginner.txt"],
+  "default": "korean_words.txt"
+}
+```
+
+#### Check Coverage
+```bash
+# Check default word list (korean_words.txt) with top 10 missing words
+curl http://127.0.0.1:8000/vocab/coverage
+
+# Check specific word list
+curl http://127.0.0.1:8000/vocab/coverage?file=beginner.txt
+
+# Customize number of missing words returned
+curl http://127.0.0.1:8000/vocab/coverage?file=beginner.txt&top_k=20
+
+# Get all missing words (set top_k=0)
+curl http://127.0.0.1:8000/vocab/coverage?top_k=0
+```
+
+Response:
+```json
+{
+  "target_word_count": 1668,
+  "existing_count": 119,
+  "missing_count": 1549,
+  "coverage_percentage": 7.13,
+  "missing_words": ["가게", "가격", "가구", ...]
+}
+```
+
+#### Get All Vocab Words
+```bash
+curl http://127.0.0.1:8000/vocab/words
+```
+
+**Setting up Target Word Lists:**
+
+1. Create the `data/` directory in your project root (if it doesn't exist)
+2. Add your target word list files (one word per line, UTF-8 encoded):
+   ```
+   data/
+   ├── korean_words.txt       # Default target list
+   ├── beginner.txt           # Beginner level words
+   └── intermediate.txt       # Intermediate level words
+   ```
+3. You can customize the directory and default file in `.env`:
+   ```
+   WORD_LIST_DIR=data
+   DEFAULT_WORD_LIST=korean_words.txt
+   ```
+
 ## Configuration
 
 Environment variables (see `.env.example`):

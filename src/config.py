@@ -112,6 +112,14 @@ class ListeningSettings(BaseSettings):
     )
 
 
+class AppSettings(BaseSettings):
+    word_list_dir: str = "data"
+    default_word_list: str = "korean_words.txt"
+    model_config = SettingsConfigDict(
+        env_file=".env", extra="ignore"
+    )
+
+
 @lru_cache()
 def get_env_settings():
     return AzureOpenAISettings()
@@ -125,3 +133,8 @@ def get_anki_settings() -> AnkiSettings:
 @lru_cache()
 def get_listening_settings() -> ListeningSettings:
     return ListeningSettings()
+
+
+@lru_cache()
+def get_app_settings() -> AppSettings:
+    return AppSettings()
