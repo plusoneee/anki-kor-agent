@@ -52,7 +52,8 @@ class VocabAnkiService:
 
     # 查重
     async def find_note(self, word: str) -> Optional[int]:
-        query = f'deck:"{self.settings.deck_name}" front:"{word}"'
+        escaped = word.replace('"', '\\"')
+        query = f'deck:"{self.settings.deck_name}" Word:"{escaped}"'
         notes = await invoke_anki("findNotes", {"query": query})
         if notes:
             console.log(f"[VocabAnkiService] found existing note: {notes[0]}", markup=False)
@@ -60,28 +61,90 @@ class VocabAnkiService:
         console.log(f"[VocabAnkiService] NEW word: {word}", markup=False)
         return None
 
-    # 建 note 結構
-    def make_note(self, word: str, back_html: str, tags: List[str]):
+    # 建 note 結構（使用 8 個獨立欄位）
+    def make_note(
+        self,
+        word: str,
+        audio_filename: str,
+        meaning: str,
+        pos_zh: str,
+        example_korean_1: str,
+        example_chinese_1: str,
+        example_korean_2: str,
+        example_chinese_2: str,
+        tags: List[str],
+    ):
         return {
             "deckName": self.settings.deck_name,
-            "modelName": self.settings.model_name,
-            "fields": {"Front": word, "Back": back_html},
+            "modelName": self.settings.vocab_model_name,
+            "fields": {
+                "Word": word,
+                "Audio": f"[sound:{audio_filename}]",
+                "Meaning": meaning,
+                "POS": pos_zh,
+                "ExampleKorean1": example_korean_1,
+                "ExampleChinese1": example_chinese_1,
+                "ExampleKorean2": example_korean_2,
+                "ExampleChinese2": example_chinese_2,
+            },
             "options": {"allowDuplicate": False, "duplicateScope": "deck"},
             "tags": tags,
         }
 
     # 新增 note
-    async def add_note(self, word: str, back_html: str, tags: List[str]) -> int:
-        note = self.make_note(word, back_html, tags)
+    async def add_note(
+        self,
+        word: str,
+        audio_filename: str,
+        meaning: str,
+        pos_zh: str,
+        example_korean_1: str,
+        example_chinese_1: str,
+        example_korean_2: str,
+        example_chinese_2: str,
+        tags: List[str],
+    ) -> int:
+        note = self.make_note(
+            word, audio_filename, meaning, pos_zh,
+            example_korean_1, example_chinese_1,
+            example_korean_2, example_chinese_2,
+            tags
+        )
         note_id = await invoke_anki("addNote", {"note": note})
         console.log(f"[VocabAnkiService] ADD → {note_id}", markup=False)
         return note_id
 
     # 更新 note
-    async def update_note(self, note_id: int, word: str, back_html: str, tags: List[str]):
+    async def update_note(
+        self,
+        note_id: int,
+        word: str,
+        audio_filename: str,
+        meaning: str,
+        pos_zh: str,
+        example_korean_1: str,
+        example_chinese_1: str,
+        example_korean_2: str,
+        example_chinese_2: str,
+        tags: List[str],
+    ):
         await invoke_anki(
             "updateNoteFields",
-            {"note": {"id": note_id, "fields": {"Front": word, "Back": back_html}}},
+            {
+                "note": {
+                    "id": note_id,
+                    "fields": {
+                        "Word": word,
+                        "Audio": f"[sound:{audio_filename}]",
+                        "Meaning": meaning,
+                        "POS": pos_zh,
+                        "ExampleKorean1": example_korean_1,
+                        "ExampleChinese1": example_chinese_1,
+                        "ExampleKorean2": example_korean_2,
+                        "ExampleChinese2": example_chinese_2,
+                    },
+                }
+            },
         )
         await self._prune_tags(note_id)
         await self._ensure_tags(note_id, tags)

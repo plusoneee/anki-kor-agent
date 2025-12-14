@@ -1,3 +1,4 @@
+import base64
 from aiohttp import ClientSession, ClientTimeout, ClientConnectorError
 from src.config import get_anki_settings
 
@@ -24,3 +25,9 @@ async def invoke_anki(action: str, params: dict):
         raise AnkiConnectionError(
             f"無法連接到 Anki，請確認 Anki 已開啟且 AnkiConnect 外掛已安裝。(URL: {settings.url})"
         )
+
+
+async def store_media_file(audio_bytes: bytes, filename: str):
+    """Store audio file in Anki media collection."""
+    audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+    await invoke_anki("storeMediaFile", {"filename": filename, "data": audio_b64})

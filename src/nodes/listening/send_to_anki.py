@@ -6,7 +6,7 @@ anki = get_listening_anki_service()
 
 
 @node_logger
-async def send_listening_to_anki(state: ListeningState):
+async def send_to_anki(state: ListeningState):
     """Add or update the listening card in Anki."""
     sentence = state["korean_sentence"]
     audio_filename = state["audio_filename"]

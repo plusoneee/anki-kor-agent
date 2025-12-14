@@ -33,6 +33,7 @@ class VocabResponse(BaseModel):
     anki_note_id: int
     tags: list[str]
     root: str | None
+    audio_filename: str | None
     force_update: bool
 
     model_config = ConfigDict(
@@ -49,6 +50,7 @@ class VocabResponse(BaseModel):
                     "anki_note_id": 1234567890,
                     "tags": ["korean_auto", "root_學", "pos_n"],
                     "root": "學",
+                    "audio_filename": "vocab_abc123def456.mp3",
                     "force_update": False,
                 }
             ]
@@ -78,6 +80,7 @@ class BatchVocabItem(BaseModel):
     anki_note_id: Optional[int] = None
     tags: list[str] = []
     root: Optional[str] = None
+    audio_filename: Optional[str] = None
     error: Optional[str] = None
     force_update: bool = False
 
@@ -108,6 +111,7 @@ async def create_vocab_card(req: VocabRequest):
             anki_note_id=result["anki_note_id"],
             tags=[],
             root=None,
+            audio_filename=None,
             force_update=req.force_update,
         )
 
@@ -119,6 +123,7 @@ async def create_vocab_card(req: VocabRequest):
         anki_note_id=result["anki_note_id"],
         tags=result.get("tags", []),
         root=result.get("root"),
+        audio_filename=result.get("audio_filename"),
         force_update=req.force_update,
     )
 
@@ -155,6 +160,7 @@ async def create_vocab_cards_batch(req: BatchVocabRequest):
                     anki_note_id=result["anki_note_id"],
                     tags=result.get("tags", []),
                     root=result.get("root"),
+                    audio_filename=result.get("audio_filename"),
                     force_update=req.force_update,
                 )
         except Exception as e:

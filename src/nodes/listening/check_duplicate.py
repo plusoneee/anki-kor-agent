@@ -6,7 +6,7 @@ anki = get_listening_anki_service()
 
 
 @node_logger
-async def check_sentence_duplicate(state: ListeningState):
+async def check_duplicate(state: ListeningState):
     """Check if a listening card for this sentence already exists."""
     sentence = state["korean_sentence"]
     note_id = await anki.find_listening_note(sentence)
