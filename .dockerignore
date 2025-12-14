@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.claude/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Environment files (will be mounted via docker-compose)
+.env
+
+# Audio files (will be mounted as volume)
+audio/
+
+# Documentation
+README*.md
+CLAUDE.md
+LICENSE
+docs/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

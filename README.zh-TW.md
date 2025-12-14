@@ -84,7 +84,61 @@ AZURE_OPENAI_API_KEY=your-api-key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-## 怎麼用
+## Docker 部署（推薦）
+
+最簡單的使用方式是透過 Docker Compose。
+
+### 事前準備
+- 已安裝 [Docker](https://docs.docker.com/get-docker/) 和 [Docker Compose](https://docs.docker.com/compose/install/)
+- 本機有執行 Anki 並安裝 AnkiConnect 外掛
+
+### 快速開始
+
+1. 複製環境變數範本：
+```bash
+cp .env.example .env
+```
+
+2. 編輯 `.env`，填入你的 Azure OpenAI 金鑰：
+```bash
+# 必填：填入你的 Azure OpenAI 憑證
+AZURE_OPENAI_API_KEY=your-api-key
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+```
+
+3. 打開本機的 Anki
+
+4. 用 Docker Compose 啟動：
+```bash
+docker-compose up -d
+```
+
+5. API 網址：http://localhost:8000
+
+### Docker 常用指令
+
+```bash
+# 啟動服務
+docker-compose up -d
+
+# 查看 log
+docker-compose logs -f
+
+# 停止服務
+docker-compose down
+
+# 改完 code 後重新建置
+docker-compose up -d --build
+```
+
+**注意事項：**
+- Docker 會自動用 `host.docker.internal:8765` 連接本機的 Anki
+- 音訊檔案會存在 `./audio` 資料夾
+- 同一個 `.env` 檔案可以給 Docker 和本機開發都用
+
+## 本機開發
+
+### 怎麼用
 
 > **注意：** 跑伺服器之前要先打開 Anki。AnkiConnect 只有在 Anki 開著的時候才能用。
 

@@ -84,7 +84,61 @@ AZURE_OPENAI_API_KEY=your-api-key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 ```
 
-## Usage
+## Docker Deployment (Recommended)
+
+The easiest way to run the application is using Docker Compose.
+
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed
+- Anki running on your host machine with AnkiConnect plugin
+
+### Quick Start
+
+1. Create `.env` file from example:
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` with your Azure OpenAI credentials:
+```bash
+# Required: Add your Azure OpenAI credentials
+AZURE_OPENAI_API_KEY=your-api-key
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+```
+
+3. Start Anki on your host machine
+
+4. Run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+5. Access the API at http://localhost:8000
+
+### Docker Commands
+
+```bash
+# Start service
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop service
+docker-compose down
+
+# Rebuild after changes
+docker-compose up -d --build
+```
+
+**Notes:**
+- Docker automatically connects to host Anki using `host.docker.internal:8765`
+- Audio files persist in `./audio` directory
+- Same `.env` file works for both Docker and local development
+
+## Local Development
+
+### Usage
 
 > **Important:** Make sure Anki is running before starting the server. AnkiConnect only works when Anki is open.
 
