@@ -1,0 +1,52 @@
+services:
+  anki-kor-agent:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    image: anki-kor-agent:latest
+    container_name: anki-kor-agent
+
+    ports:
+      - "8000:8000"
+
+    # Load environment variables from .env file
+    env_file:
+      - ../.env
+
+    # Override ANKI_URL to use host.docker.internal
+    environment:
+      - ANKI_URL=http://host.docker.internal:8765
+
+    # Mount audio directory as volume for persistence
+    volumes:
+      - ./audio:/app/audio
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Extra hosts for cross-platform host access
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Resource limits (optional, adjust as needed)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+# Named volumes (optional, for better management)
+volumes:
+  audio-data:
+    driver: local
