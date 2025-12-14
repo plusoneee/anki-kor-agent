@@ -18,7 +18,6 @@ class AzureOpenAISettings(BaseSettings):
 class AnkiSettings(BaseSettings):
     url: str = "http://127.0.0.1:8765"
     deck_name: str = "Korean::Auto"
-    model_name: str = "Basic"  # 保留舊的 Basic model 設定（向後相容）
     vocab_model_name: str = "Korean_Vocab_Auto"  # 系統自動生成的 Vocabulary model
     model_config = SettingsConfigDict(
         env_file=".env", env_prefix="ANKI_", extra="ignore"
