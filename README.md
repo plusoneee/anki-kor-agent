@@ -1,5 +1,7 @@
 # Anki Kor Agent
 
+[繁體中文](README.zh-TW.md)
+
 A Korean learning agent that uses LangGraph and Azure OpenAI to automatically create Anki flashcards. Supports both vocabulary cards and listening cards with TTS audio.
 
 ## Features
