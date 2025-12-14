@@ -2,12 +2,12 @@
 
 A Korean learning agent that uses LangGraph and Azure OpenAI to automatically create Anki flashcards.
 
-## 📚 Documentation
+## Documentation
 
 - **English**: [docs/README.md](docs/README.md)
 - **繁體中文**: [docs/README.zh-TW.md](docs/README.zh-TW.md)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Docker (Recommended)
 
