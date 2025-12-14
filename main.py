@@ -1,12 +1,24 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from src.routers import vocab_router, listening_router
 from src.utils.anki import AnkiConnectionError
+from src.startup import initialize
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """API 生命週期管理：啟動時初始化 Anki 連線和 Models"""
+    await initialize()
+    yield
+    # 關閉時的清理（目前不需要）
+
 
 app = FastAPI(
     title="Korean Anki Loader API",
     description="A Korean learning tool that creates Anki flashcards for vocabulary and listening practice.",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 

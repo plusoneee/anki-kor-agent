@@ -18,13 +18,85 @@ class AzureOpenAISettings(BaseSettings):
 class AnkiSettings(BaseSettings):
     url: str = "http://127.0.0.1:8765"
     deck_name: str = "Korean::Auto"
-    model_name: str = "Basic"
+    model_name: str = "Basic"  # 保留舊的 Basic model 設定（向後相容）
+    vocab_model_name: str = "Korean_Vocab_Auto"  # 系統自動生成的 Vocabulary model
     model_config = SettingsConfigDict(
         env_file=".env", env_prefix="ANKI_", extra="ignore"
     )
 
     tag_default: str = "korean_auto"
     tag_native: str = "native_kor"
+
+    # Vocabulary model card templates and CSS
+    card_css: str = """
+.card-root {
+    font-family: 'Noto Sans KR', sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+.word {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.meaning-pos {
+    margin: 15px 0;
+}
+.meaning {
+    font-size: 1.3em;
+}
+.pos-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    background-color: #e0e0e0;
+}
+.ex-block {
+    margin-top: 15px;
+    text-align: center;
+}
+.ex-item {
+    margin: 10px 0;
+}
+.ex-kr {
+    font-size: 1.1em;
+    margin-bottom: 3px;
+}
+.ex-zh {
+    color: #555;
+    font-size: 0.95em;
+}
+"""
+    card_front: str = """
+<div class="card-root">
+    <div class="word">{{Word}}</div>
+    {{Audio}}
+</div>
+"""
+    card_back: str = """
+<div class="card-root">
+    <div class="word">{{Word}}</div>
+    {{Audio}}
+    <hr>
+    <div class="meaning-pos">
+        <span class="meaning">{{Meaning}}</span>
+        <span class="pos-badge">{{POS}}</span>
+    </div>
+    <hr>
+    <div class="ex-block">
+        <div class="ex-item">
+            <div class="ex-kr">{{ExampleKorean1}}</div>
+            <div class="ex-zh">{{ExampleChinese1}}</div>
+        </div>
+        <div class="ex-item">
+            <div class="ex-kr">{{ExampleKorean2}}</div>
+            <div class="ex-zh">{{ExampleChinese2}}</div>
+        </div>
+    </div>
+</div>
+"""
 
 
 class ListeningSettings(BaseSettings):

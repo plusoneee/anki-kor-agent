@@ -7,8 +7,16 @@ class VocabState(TypedDict, total=False):
     pos: str
     examples: List[Dict[str, str]]  # casual/formal examples
 
-    # build_back node output
-    back_html: str
+    # build_examples node output (for separate Anki fields)
+    example_korean_1: str  # 韓文例句 1
+    example_chinese_1: str  # 中文例句 1
+    example_korean_2: str  # 韓文例句 2
+    example_chinese_2: str  # 中文例句 2
+    pos_zh: str  # 詞性中文（規則轉換）
+
+    # TTS audio output
+    audio_bytes: bytes  # TTS 音檔 bytes
+    audio_filename: str  # 音檔檔名
 
     # send_to_anki node output
     anki_note_id: Optional[int]

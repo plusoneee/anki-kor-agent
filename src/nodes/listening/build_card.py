@@ -5,7 +5,7 @@ from src.utils.logger import node_logger
 
 
 @node_logger
-async def build_listening_card(state: ListeningState):
+async def build_card(state: ListeningState):
     """Build front and back HTML for the listening card."""
     settings = get_listening_settings()
 
