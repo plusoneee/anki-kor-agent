@@ -37,7 +37,7 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-retro-cream overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
@@ -48,7 +48,7 @@ const MainLayout = () => {
       {/* Mobile Overlay */}
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-retro-brown/60 z-40"
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
           onClick={closeSidebar}
           aria-hidden="true"
         />
@@ -62,7 +62,7 @@ const MainLayout = () => {
         )}
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-retro-cream">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

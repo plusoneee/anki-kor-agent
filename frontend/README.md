@@ -1,121 +1,147 @@
-# AnkiKor Dashboard - Bauhaus Design
+# AnkiKor Frontend
 
-Bauhaus 風格的韓語學習管理儀表板，用於追蹤和管理 Anki 學習進度。
+Modern glassmorphism web interface for Korean language learning, inspired by Arc Browser's translucent aesthetic.
 
-## 設計原則
+## Design Philosophy
 
-本專案遵循 Bauhaus (包浩斯) 設計原則：
+The interface adopts a glassmorphism design language focused on creating a calm, distraction-free learning environment:
 
-- **不對稱但平衡的網格**: 使用非對稱的版面配置，但保持視覺平衡
-- **三原色**: 紅色 (#e63946)、黃色 (#ffd60a)、藍色 (#0077b6)
-- **黑白基調**: 黑色 (#1a1a1a) 和白色 (#f8f9fa)
-- **幾何形狀**: 使用圓形和矩形作為核心視覺元素
-- **功能性字體**: 乾淨的無襯線字體，強調功能性
+- **Translucent Glass Surfaces**: Frosted-glass cards with backdrop blur effects
+- **Subtle Gradient Background**: Rose-to-indigo gradient optimized for long study sessions
+- **Minimalist Interaction**: Smooth animations with purposeful transitions (300-500ms)
+- **Typography**: Inter for Latin characters, Noto Sans KR for Korean, optimized for readability
+- **Accessibility**: ARIA attributes, semantic HTML, keyboard navigation support
 
-## 功能特點 (Phase 1 - MVP)
+## Features
 
-### 1. 學習進度儀表板
-- 覆蓋率視覺化圖表
-- 目標單字清單選擇器
-- 統計數據顯示
+### Learning Center (`/learning`)
+- **Quick Create Forms**: Instant vocabulary and listening card creation
+- **Collapsible Tips**: Contextual usage tips with persistent state
+- **Dual-Column Layout**: Vocabulary and listening forms side by side
 
-### 2. 連線狀態監控
-- API 連線狀態
-- Anki 連線狀態
-- 即時狀態更新
+### Vocabulary Library (`/vocabulary`)
+- **Vocabulary List**: Searchable list of learned words with real-time filtering
+- **Coverage Visualization**: Interactive chart showing learning progress
+- **Target List Management**: Track progress against custom word lists
+- **Statistics Dashboard**: Total words, coverage percentage, and learning insights
 
-### 3. 快速建立介面
-- 單字卡片快速建立
-- 聽力卡片快速建立
-- 即時結果反饋
+### Global Features
+- **Connection Status**: Real-time monitoring of API and Anki connectivity
+- **Responsive Design**: Mobile-first approach with adaptive navigation
+- **Persistent UI State**: LocalStorage integration for user preferences
 
-### 4. 已學單字列表
-- 可搜尋的單字列表
-- 顯示所有已學習的單字
+## Technical Stack
 
-### 5. 目標清單管理
-- 查看所有可用的目標清單
-- 檢查覆蓋率
-- 顯示待學習單字
+- **React 18** - UI framework
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Utility-first CSS with custom glassmorphism tokens
+- **React Router** - Client-side routing
+- **Recharts** - Data visualization
+- **Axios** - HTTP client
 
-## 技術棧
+## Development
 
-- **React 19** - UI 框架
-- **Vite** - 建置工具
-- **Tailwind CSS v4** - 樣式框架
-- **Recharts** - 圖表庫
-- **Axios** - HTTP 客戶端
+### Prerequisites
 
-## 開發指令
+Before starting the frontend:
+1. Backend API running at `http://127.0.0.1:8000`
+2. Anki Connect installed and running at `http://127.0.0.1:8765`
 
-### 安裝依賴
+### Install Dependencies
 ```bash
 npm install
 ```
 
-### 啟動開發伺服器
+### Start Development Server
 ```bash
 npm run dev
 ```
+Server runs at `http://localhost:5173`
 
-伺服器將運行在 `http://localhost:5173`
-
-### 建置生產版本
+### Build for Production
 ```bash
 npm run build
 ```
 
-### 預覽生產建置
+### Preview Production Build
 ```bash
 npm run preview
 ```
 
-## 環境配置
+## Environment Configuration
 
-創建 `.env` 檔案並設置以下變數：
+Create a `.env` file with the following variables:
 
 ```env
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## 專案結構
+See `.env.example` for reference.
+
+## Project Structure
 
 ```
 frontend/
 ├── src/
-│   ├── components/          # React 元件
-│   │   ├── BauhausShapes.jsx      # Bauhaus 幾何形狀元件
-│   │   ├── Navbar.jsx             # 導航列
-│   │   ├── Dashboard.jsx          # 儀表板
-│   │   ├── VocabQuickCreate.jsx   # 單字快速建立
-│   │   ├── ListeningQuickCreate.jsx  # 聽力快速建立
-│   │   ├── VocabList.jsx          # 單字列表
-│   │   └── TargetListManager.jsx  # 目標清單管理
-│   ├── hooks/               # 自定義 Hooks
-│   │   └── useConnectionStatus.js # 連線狀態 Hook
-│   ├── utils/               # 工具函數
-│   │   └── api.js          # API 客戶端
-│   ├── App.jsx             # 主應用元件
-│   ├── index.css           # Bauhaus 設計系統樣式
-│   └── main.jsx            # 應用入口點
-├── public/                  # 靜態資源
-├── .env                     # 環境變數
-└── package.json            # 專案依賴
+│   ├── components/
+│   │   ├── GlassComponents.jsx      # Reusable glassmorphism UI primitives
+│   │   ├── Dashboard.jsx            # Coverage visualization widget
+│   │   ├── VocabQuickCreate.jsx     # Vocabulary card creation form
+│   │   ├── ListeningQuickCreate.jsx # Listening card creation form
+│   │   ├── VocabList.jsx            # Learned vocabulary list
+│   │   ├── TargetListManager.jsx    # Target list management
+│   │   └── layout/
+│   │       ├── Sidebar.jsx          # Desktop navigation sidebar
+│   │       └── MobileTopBar.jsx     # Mobile navigation header
+│   ├── pages/
+│   │   ├── LearningCenterPage.jsx   # Quick create interface (/learning)
+│   │   └── VocabularyLibraryPage.jsx # Library and coverage (/vocabulary)
+│   ├── layouts/
+│   │   └── MainLayout.jsx           # App shell with navigation
+│   ├── contexts/
+│   │   └── CoverageContext.jsx      # Coverage data state management
+│   ├── hooks/
+│   │   └── useConnectionStatus.js   # API/Anki connection monitoring
+│   ├── routes/
+│   │   └── index.jsx                # Route configuration
+│   ├── utils/
+│   │   └── api.js                   # Axios API client
+│   ├── index.css                    # Glassmorphism design system
+│   └── main.jsx                     # Application entry point
+├── public/
+│   └── vite.svg                     # Vite logo
+├── .env.example                     # Environment variables template
+├── .gitignore                       # Git ignore patterns
+├── tailwind.config.js               # Tailwind customization with glass tokens
+├── postcss.config.js                # PostCSS configuration
+├── vite.config.js                   # Vite configuration
+├── eslint.config.js                 # ESLint configuration
+├── package.json                     # Dependencies and scripts
+└── package-lock.json                # Dependency lock file
 ```
 
-## 前置需求
+## Design System
 
-在啟動前端之前，請確保：
+### Color Palette
+- **Glass Rose**: `#fff1f2` → `#e11d48` (accents, listening cards)
+- **Glass Indigo**: `#eef2ff` → `#4338ca` (accents, vocabulary cards)
+- **Glass Lavender**: `#b8a9d4` (decorative elements)
+- **Text Primary**: `#2d2d3a` (main content)
+- **Text Secondary**: `#6b6b7b` (supporting text)
 
-1. 後端 API 正在運行 (`http://127.0.0.1:8000`)
-2. Anki Connect 已安裝並運行 (`http://127.0.0.1:8765`)
+### Glassmorphism Components
+All components use the `GlassCard`, `GlassButton`, `GlassInput` primitives with:
+- `backdrop-filter: blur(16px)`
+- Subtle borders with `rgba(255, 255, 255, 0.3)`
+- Smooth hover transitions
+- Shadow depth variations
 
-## 瀏覽器支援
+## Browser Support
 
-- Chrome/Edge (最新版本)
-- Firefox (最新版本)
-- Safari (最新版本)
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
 
-## 貢獻
+## Notes
 
-歡迎提交 Issue 和 Pull Request！
+Frontend implementation generated with Claude Code. Includes responsive design patterns, accessibility features, and optimized user experience for extended learning sessions.
