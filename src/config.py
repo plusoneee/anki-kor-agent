@@ -120,6 +120,18 @@ class AppSettings(BaseSettings):
     )
 
 
+class CORSSettings(BaseSettings):
+    origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+    ]
+    model_config = SettingsConfigDict(
+        env_file=".env", env_prefix="CORS_", extra="ignore"
+    )
+
+
 @lru_cache()
 def get_env_settings():
     return AzureOpenAISettings()
@@ -138,3 +150,8 @@ def get_listening_settings() -> ListeningSettings:
 @lru_cache()
 def get_app_settings() -> AppSettings:
     return AppSettings()
+
+
+@lru_cache()
+def get_cors_settings() -> CORSSettings:
+    return CORSSettings()

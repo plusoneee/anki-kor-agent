@@ -1,13 +1,14 @@
 services:
-  anki-kor-agent:
+  backend:
     build:
-      context: .
+      context: ..
       dockerfile: deployment/Dockerfile
     image: anki-kor-agent:latest
-    container_name: anki-kor-agent
+    container_name: anki-kor-backend
 
-    ports:
-      - "8000:8000"
+    # Don't expose port 8000 externally (only accessible via frontend proxy)
+    expose:
+      - "8000"
 
     # Load environment variables from .env file
     env_file:
@@ -19,7 +20,7 @@ services:
 
     # Mount audio directory as volume for persistence
     volumes:
-      - ./audio:/app/audio
+      - audio-data:/app/audio
 
     # Restart policy
     restart: unless-stopped
@@ -46,7 +47,56 @@ services:
           cpus: '0.5'
           memory: 256M
 
-# Named volumes (optional, for better management)
+    # Network
+    networks:
+      - anki-network
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: anki-kor-frontend:latest
+    container_name: anki-kor-frontend
+
+    ports:
+      - "3000:80"
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # Depends on backend
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    # Network
+    networks:
+      - anki-network
+
+# Named volumes (for better management)
 volumes:
   audio-data:
     driver: local
+
+# Networks
+networks:
+  anki-network:
+    driver: bridge

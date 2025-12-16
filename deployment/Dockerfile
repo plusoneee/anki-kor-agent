@@ -22,11 +22,14 @@ RUN uv sync --frozen --no-dev
 # ============================================================================
 FROM python:3.13-slim
 
-# Install curl for healthcheck
+# Install curl for healthcheck and uv
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install uv in runtime image
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser
@@ -37,6 +40,9 @@ WORKDIR /app
 # Copy virtual environment from builder
 COPY --from=builder --chown=appuser:appuser /app/.venv /app/.venv
 
+# Copy dependency files (needed for uv run)
+COPY --chown=appuser:appuser pyproject.toml uv.lock ./
+
 # Copy application code
 COPY --chown=appuser:appuser . .
 
@@ -46,8 +52,7 @@ RUN mkdir -p /app/audio && chown appuser:appuser /app/audio
 # Switch to non-root user
 USER appuser
 
-# Add venv to PATH
-ENV PATH="/app/.venv/bin:$PATH"
+# Environment variables
 ENV PYTHONUNBUFFERED=1
 
 # Expose FastAPI default port
@@ -57,5 +62,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/ || exit 1
 
-# Run FastAPI with uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run FastAPI with uvicorn using uv run
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

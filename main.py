@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.routers import vocab_router, listening_router
 from src.utils.anki import AnkiConnectionError
 from src.startup import initialize
+from src.config import get_cors_settings
 
 
 @asynccontextmanager
@@ -20,17 +21,14 @@ app = FastAPI(
     description="A Korean learning tool that creates Anki flashcards for vocabulary and listening practice.",
     version="1.0.0",
     lifespan=lifespan,
+    root_path="/api",  # For nginx proxy
 )
 
 # CORS middleware configuration
+cors_settings = get_cors_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=cors_settings.origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -285,6 +285,14 @@ curl http://127.0.0.1:8000/vocab/words
 | `ANKI_LISTENING_MODEL_NAME` | 聽力筆記類型 | `Listening` |
 | `ANKI_LISTENING_TAG_DEFAULT` | 預設標籤 | `listening_auto` |
 
+### CORS 設定
+
+| 變數 | 說明 | 預設值 |
+|------|------|--------|
+| `CORS_ORIGINS` | 允許的 CORS 來源（逗號分隔） | `http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174` |
+
+**注意**：僅在前端開發時需要。使用 Docker 的生產部署通常不需要此設定，因為前端是透過 nginx 代理提供服務。
+
 ## 專案結構
 
 ```

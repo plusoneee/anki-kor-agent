@@ -285,6 +285,14 @@ Environment variables (see `.env.example`):
 | `ANKI_LISTENING_MODEL_NAME` | Listening note type | `Listening` |
 | `ANKI_LISTENING_TAG_DEFAULT` | Default tag | `listening_auto` |
 
+### CORS Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `CORS_ORIGINS` | Allowed CORS origins (comma-separated) | `http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174` |
+
+**Note**: Only needed for frontend development. Production deployments using Docker typically don't require this as the frontend is served through nginx proxy.
+
 ## Project Structure
 
 ```
