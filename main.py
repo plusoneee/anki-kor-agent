@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers import vocab_router, listening_router
+from src.routers import vocab_router, listening_router, status_router
 from src.utils.anki import AnkiConnectionError
 from src.startup import initialize
 
@@ -53,6 +53,7 @@ async def anki_connection_error_handler(_request: Request, exc: AnkiConnectionEr
 # Include routers
 app.include_router(vocab_router)
 app.include_router(listening_router)
+app.include_router(status_router)
 
 
 @app.get("/")

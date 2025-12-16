@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
-const ANKI_CONNECT_URL = 'http://127.0.0.1:8765';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -24,11 +23,8 @@ export const checkApiStatus = async () => {
 
 export const checkAnkiStatus = async () => {
   try {
-    const response = await axios.post(ANKI_CONNECT_URL, {
-      action: 'version',
-      version: 6,
-    });
-    return { connected: true, version: response.data.result };
+    const response = await api.get('/status/anki');
+    return response.data;
   } catch (error) {
     return { connected: false, error: error.message };
   }
